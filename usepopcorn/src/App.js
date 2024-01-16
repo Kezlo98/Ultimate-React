@@ -57,8 +57,8 @@ export default function App() {
 
   return (
     <>
-      <StarRating maxRating={10} />
-      <StarRating maxRating={20} />
+      <StarRating maxRating={5} messages={["Terrible", "Bad", "Okay", "Good", "Amazing"]} defaultRating={3}/>
+      <StarRating maxRating={20} size={24} color="red" className="test"/>
       {/*<NavBar>*/}
       {/*  <Search />*/}
       {/*  <NumResults num={movies.length} />*/}
