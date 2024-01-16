@@ -1,5 +1,5 @@
-import { useState } from "react";
-import StarRating from "./StarRating";
+import {useEffect, useState} from "react";
+// import StarRating from "./StarRating";
 
 const tempMovieData = [
   {
@@ -51,29 +51,48 @@ const tempWatchedData = [
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
 
+const KEY = '6fe7d22d';
+
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
   const [watched, setWatched] = useState(tempWatchedData);
+  const [isLoading, setIsLoading] = useState(false);
+  const query = "interstellar";
+
+  useEffect(() => {
+    async function fetchMovies() {
+      setIsLoading(true);
+      const res = await fetch(`https://www.omdbapi.com/?i=tt3896198&apikey=${KEY}&s=${query}`);
+      const data = await res.json();
+      setMovies(data.Search);
+      setIsLoading(false);
+    }
+
+    fetchMovies();
+  }, []);
+
 
   return (
     <>
-      <StarRating maxRating={5} messages={["Terrible", "Bad", "Okay", "Good", "Amazing"]} defaultRating={3}/>
-      <StarRating maxRating={20} size={24} color="red" className="test"/>
-      {/*<NavBar>*/}
-      {/*  <Search />*/}
-      {/*  <NumResults num={movies.length} />*/}
-      {/*</NavBar>*/}
-      {/*<MainApp>*/}
-      {/*  <Box>*/}
-      {/*    <MovieList movies={movies} />*/}
-      {/*  </Box>*/}
-      {/*  <Box>*/}
-      {/*    <WatchedSummary watched={watched} />*/}
-      {/*    <WatchedMoviesList watched={watched} />*/}
-      {/*  </Box>*/}
-      {/*</MainApp>*/}
+      <NavBar>
+        <Search />
+        <NumResults num={movies.length} />
+      </NavBar>
+      <MainApp>
+        <Box>
+          {isLoading ? <Loader /> : <MovieList movies={movies} />}
+        </Box>
+        <Box>
+          <WatchedSummary watched={watched} />
+          <WatchedMoviesList watched={watched} />
+        </Box>
+      </MainApp>
     </>
   );
+}
+
+function Loader() {
+  return <div className="loader">Loading...</div>;
 }
 
 const NavBar = ({ children }) => {
